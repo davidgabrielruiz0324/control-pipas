@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Suministro de Agua</title>
+</head>
+<body>
+
+<h3>Registro de suministro</h3>
+
+<form id="f">
+<input type="hidden" id="id">
+
+Estatus:<br>
+<select id="estatus" onchange="litrosOnOff()">
+  <option value="ENTREGADO">ENTREGADO</option>
+  <option value="NO SE SURTIÓ">NO SE SURTIÓ</option>
+</select><br><br>
+
+Litros:<br>
+<input type="number" id="litros" value="0"><br><br>
+
+Pipa / Operador:<br>
+<input type="text" id="operador" required><br><br>
+
+<button>GUARDAR</button>
+</form>
+
+<script>
+const p = new URLSearchParams(location.search);
+document.getElementById("id").value = p.get("id");
+
+function litrosOnOff(){
+  const l = document.getElementById("litros");
+  l.disabled = document.getElementById("estatus").value === "NO SE SURTIÓ";
+  if (l.disabled) l.value = 0;
+}
+
+document.getElementById("f").onsubmit = e => {
+  e.preventDefault();
+  fetch("https://script.google.com/macros/s/AKfycbwfGpRrkboVaqMjEIt6jpVcMC3x2JERXFSscl7e8DfPjwdmVy-czX9ZNgdlUWj1y7jJCA/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      id: id.value,
+      estatus: estatus.value,
+      litros: litros.value,
+      operador: operador.value
+    })
+  }).then(() => alert("Guardado"));
+};
+</script>
