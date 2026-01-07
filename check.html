@@ -1,69 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <title>Suministro de Agua</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
 
 <h3>Registro de suministro</h3>
 
+<p><strong>ID cliente:</strong> <span id="ver_id"></span></p>
+<p><strong>Nombre:</strong> <span id="ver_nombre">---</span></p>
+
 <form id="f">
+
 <input type="hidden" id="id_cliente">
 
-Estatus:<br>
-<select id="estatus" onchange="litrosOnOff()">
+<label>Estatus:</label><br>
+<select id="estatus" onchange="controlLitros()">
   <option value="ENTREGADO">ENTREGADO</option>
   <option value="NO SE SURTIÓ">NO SE SURTIÓ</option>
 </select><br><br>
 
-Litros:<br>
+<label>Litros:</label><br>
 <input type="number" id="litros" value="0"><br><br>
 
-Pipa / Operador:<br>
+<label>Pipa / Operador:</label><br>
 <input type="text" id="operador" required><br><br>
 
-<button>GUARDAR</button>
+<button type="submit">GUARDAR</button>
+
 </form>
 
 <script>
-const p = new URLSearchParams(location.search);
-document.getElementById("id_cliente").value = p.get("id");
-function litrosOnOff(){
-  const l = document.getElementById("litros");
-  l.disabled = document.getElementById("estatus").value === "NO SE SURTIÓ";
-  if (l.disabled) l.value = 0;
-}
-window.latitud = "";
-window.longitud = "";
+// =====================
+// OBTENER ID DEL QR
+// =====================
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
 
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(pos => {
-    window.latitud = pos.coords.latitude;
-    window.longitud = pos.coords.longitude;
-  });
+document.getElementById("id_cliente").value = id;
+document.getElementById("ver_id").innerText = id ?? "NO LLEGÓ ID";
+
+// =====================
+// CONTROL DE LITROS
+// =====================
+function controlLitros() {
+  const litros = document.getElementById("litros");
+  if (document.getElementById("estatus").value === "NO SE SURTIÓ") {
+    litros.value = 0;
+    litros.disabled = true;
+  } else {
+    litros.disabled = false;
+  }
 }
+
+// =====================
+// ENVÍO CON GPS
+// =====================
 document.getElementById("f").onsubmit = e => {
   e.preventDefault();
+
+  if (!navigator.geolocation) {
+    alert("El dispositivo no soporta GPS");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      enviarRegistro(pos.coords.latitude, pos.coords.longitude);
+    },
+    () => {
+      alert("Debes permitir la ubicación para registrar");
+    }
+  );
+};
+
+function enviarRegistro(lat, lon) {
   fetch("https://script.google.com/macros/s/AKfycbyoOh37YEdw_q_-F25tq1jZRh82c_xSKx-L_JN_QySqUHs-6kO_2QKmZXr4DnA7y-XAmg/exec", {
     method: "POST",
-  body: JSON.stringify({
-    id: document.getElementById("id_cliente").value,
-    estatus: estatus.value,
-    litros: litros.value,
-    operador: operador.value
-    lat: window.latitud,
-    lon: window.longitud
+    body: JSON.stringify({
+      id: document.getElementById("id_cliente").value,
+      estatus: document.getElementById("estatus").value,
+      litros: document.getElementById("litros").value,
+      operador: document.getElementById("operador").value,
+      lat: lat,
+      lon: lon
+    })
   })
-})
-.then(r => r.text())
-.then(resp => {
-  if (resp === "DUPLICADO") {
-    alert("⚠️ Este cliente ya fue surtido hoy");
-  } else {
-    alert("✅ Registro guardado");
-  }
-});
-  
+  .then(r => r.text())
+  .then(resp => {
+    if (resp === "DUPLICADO") {
+      alert("⚠️ Este cliente ya fue surtido hoy");
+    } else {
+      alert("✅ Registro guardado correctamente");
+    }
+  });
+}
+</script>
 
-
+</body>
+</html>
