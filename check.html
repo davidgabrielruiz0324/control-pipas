@@ -37,16 +37,24 @@ function litrosOnOff(){
 
 document.getElementById("f").onsubmit = e => {
   e.preventDefault();
-  fetch("https://script.google.com/macros/s/AKfycbwfGpRrkboVaqMjEIt6jpVcMC3x2JERXFSscl7e8DfPjwdmVy-czX9ZNgdlUWj1y7jJCA/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbyoOh37YEdw_q_-F25tq1jZRh82c_xSKx-L_JN_QySqUHs-6kO_2QKmZXr4DnA7y-XAmg/exec", {
     method: "POST",
   body: JSON.stringify({
     id: document.getElementById("id_cliente").value,
     estatus: estatus.value,
     litros: litros.value,
     operador: operador.value
-    })
-  }).then(() => alert("Guardado"));
-};
-
-</script>
+    lat: window.latitud,
+    lon: window.longitud
+  })
+})
+.then(r => r.text())
+.then(resp => {
+  if (resp === "DUPLICADO") {
+    alert("⚠️ Este cliente ya fue surtido hoy");
+  } else {
+    alert("✅ Registro guardado");
+  }
+});
+  
 
