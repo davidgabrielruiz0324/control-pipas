@@ -34,7 +34,15 @@ function litrosOnOff(){
   l.disabled = document.getElementById("estatus").value === "NO SE SURTIÓ";
   if (l.disabled) l.value = 0;
 }
+window.latitud = "";
+window.longitud = "";
 
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(pos => {
+    window.latitud = pos.coords.latitude;
+    window.longitud = pos.coords.longitude;
+  });
+}
 document.getElementById("f").onsubmit = e => {
   e.preventDefault();
   fetch("https://script.google.com/macros/s/AKfycbyoOh37YEdw_q_-F25tq1jZRh82c_xSKx-L_JN_QySqUHs-6kO_2QKmZXr4DnA7y-XAmg/exec", {
@@ -57,4 +65,5 @@ document.getElementById("f").onsubmit = e => {
   }
 });
   
+
 
