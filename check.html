@@ -78,7 +78,7 @@ document.getElementById("f").onsubmit = e => {
 };
 
 function enviarRegistro(lat, lon) {
- fetch("https://script.google.com/macros/s/AKfycbyoOh37YEdw_q_-F25tq1jZRh82c_xSKx-L_JN_QySqUHs-6kO_2QKmZXr4DnA7y-XAmg/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbyoOh37YEdw_q_-F25tq1jZRh82c_xSKx-L_JN_QySqUHs-6kO_2QKmZXr4DnA7y-XAmg/exec", {
     method: "POST",
     body: JSON.stringify({
       id: document.getElementById("id_cliente").value,
