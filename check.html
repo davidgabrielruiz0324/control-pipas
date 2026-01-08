@@ -1,38 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Registro de suministro</title>
-  <style>
-    body { font-family: Arial; padding: 20px; }
-    label { display:block; margin-top:10px; }
-    button { margin-top:15px; padding:10px; }
-  </style>
+<meta charset="UTF-8">
+<title>Registro de suministro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: Arial, sans-serif; padding: 15px; }
+label { display:block; margin-top:10px; }
+input, select, button { width:100%; padding:8px; margin-top:5px; }
+button { margin-top:15px; }
+</style>
 </head>
 <body>
 
 <h2>Registro de suministro</h2>
 
 <p><b>ID cliente:</b> <span id="idCliente"></span></p>
-<p><b>Nombre:</b> <span id="nombreCliente">---</span></p>
+<p><b>Nombre:</b> <span id="nombreCliente">Cargando...</span></p>
 
 <label>Estatus:
-  <select id="estatus">
-    <option value="ENTREGADO">ENTREGADO</option>
-    <option value="NO SE SURTIÓ">NO SE SURTIÓ</option>
-  </select>
+<select id="estatus">
+<option value="ENTREGADO">ENTREGADO</option>
+<option value="NO SE SURTIÓ">NO SE SURTIÓ</option>
+</select>
 </label>
 
 <label>Litros:
-  <input type="number" id="litros" value="0">
+<input type="number" id="litros" value="0">
 </label>
 
 <label>Operador:
-  <input type="text" id="operador">
+<input type="text" id="operador">
 </label>
 
 <label># Pipa:
-  <input type="text" id="pipa">
+<input type="text" id="pipa">
 </label>
 
 <button onclick="guardar()">GUARDAR</button>
@@ -44,12 +46,14 @@ const id = params.get("id");
 document.getElementById("idCliente").innerText = id;
 
 fetch("https://script.google.com/macros/s/AKfycbw1P0sEyaFqO5BuqUQESTw7sh63uxN31lqBh2q4C3hFPjCK1ldVuH9cs_gs8qPNjVqIkQ/exec?accion=cliente&id=" + id)
-  .then(res => res.json())
-  .then(data => {
-    if (data.nombre) {
-      document.getElementById("nombreCliente").innerText = data.nombre;
-    }
-  });
+.then(r => r.json())
+.then(d => {
+  if (d.nombre) {
+    document.getElementById("nombreCliente").innerText = d.nombre;
+  } else {
+    document.getElementById("nombreCliente").innerText = "NO ENCONTRADO";
+  }
+});
 
 function guardar() {
   const datos = {
@@ -65,7 +69,7 @@ function guardar() {
     method: "POST",
     body: JSON.stringify(datos)
   })
-  .then(() => alert("Registro guardado"));
+  .then(() => alert("Registro guardado correctamente"));
 }
 </script>
 
