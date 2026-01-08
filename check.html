@@ -1,71 +1,73 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Registro de suministro</title>
+  <meta charset="UTF-8">
+  <title>Registro de suministro</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    label { display:block; margin-top:10px; }
+    button { margin-top:15px; padding:10px; }
+  </style>
 </head>
-
 <body>
 
 <h2>Registro de suministro</h2>
 
-<p><strong>ID cliente:</strong> <span id="idTxt"></span></p>
-<p><strong>Nombre:</strong> <span id="nombreTxt">---</span></p>
+<p><b>ID cliente:</b> <span id="idCliente"></span></p>
+<p><b>Nombre:</b> <span id="nombreCliente">---</span></p>
 
-<form id="f">
-  <input type="hidden" id="id_cliente">
-  <input type="hidden" id="nombre_cliente">
-
-  <label>Estatus:</label><br>
+<label>Estatus:
   <select id="estatus">
     <option value="ENTREGADO">ENTREGADO</option>
-    <option value="NO SURTIDO">NO SURTIDO</option>
-  </select><br><br>
+    <option value="NO SE SURTIÓ">NO SE SURTIÓ</option>
+  </select>
+</label>
 
-  <label>Litros:</label><br>
-  <input type="number" id="litros" value="0"><br><br>
+<label>Litros:
+  <input type="number" id="litros" value="0">
+</label>
 
-  <label>Operador:</label><br>
-  <input type="text" id="operador" required><br><br>
+<label>Operador:
+  <input type="text" id="operador">
+</label>
 
-  <button type="submit">GUARDAR</button>
-</form>
+<label># Pipa:
+  <input type="text" id="pipa">
+</label>
+
+<button onclick="guardar()">GUARDAR</button>
 
 <script>
-const params = new URLSearchParams(location.search);
+const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 
-idTxt.textContent = id;
-id_cliente.value = id;
+document.getElementById("idCliente").innerText = id;
 
-// CONSULTAR NOMBRE
-fetch("https://script.google.com/macros/s/AKfycbw1P0sEyaFqO5BuqUQESTw7sh63uxN31lqBh2q4C3hFPjCK1ldVuH9cs_gs8qPNjVqIkQ/exec" + id)
-  .then(r => r.json())
-  .then(d => {
-    nombreTxt.textContent = d.nombre || "---";
-    nombre_cliente.value = d.nombre || "";
+fetch("https://script.google.com/macros/s/AKfycbw1P0sEyaFqO5BuqUQESTw7sh63uxN31lqBh2q4C3hFPjCK1ldVuH9cs_gs8qPNjVqIkQ/exec?accion=cliente&id=" + id)
+  .then(res => res.json())
+  .then(data => {
+    if (data.nombre) {
+      document.getElementById("nombreCliente").innerText = data.nombre;
+    }
   });
 
-document.getElementById("f").onsubmit = e => {
-  e.preventDefault();
+function guardar() {
+  const datos = {
+    id: id,
+    nombre: document.getElementById("nombreCliente").innerText,
+    estatus: document.getElementById("estatus").value,
+    litros: document.getElementById("litros").value,
+    operador: document.getElementById("operador").value,
+    pipa: document.getElementById("pipa").value
+  };
 
   fetch("https://script.google.com/macros/s/AKfycbw1P0sEyaFqO5BuqUQESTw7sh63uxN31lqBh2q4C3hFPjCK1ldVuH9cs_gs8qPNjVqIkQ/exec", {
     method: "POST",
-    body: JSON.stringify({
-      id: id,
-      nombre: nombre_cliente.value,
-      estatus: estatus.value,
-      litros: litros.value,
-      operador: operador.value
-    })
+    body: JSON.stringify(datos)
   })
-  .then(r => r.text())
-  .then(() => alert("✅ Registro guardado"));
-};
+  .then(() => alert("Registro guardado"));
+}
 </script>
 
 </body>
 </html>
-
-
