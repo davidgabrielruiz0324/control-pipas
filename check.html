@@ -2,104 +2,68 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Suministro de Agua</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de suministro</title>
 </head>
 
 <body>
 
-<h3>Registro de suministro</h3>
+<h2>Registro de suministro</h2>
 
-<p><strong>ID cliente:</strong> <span id="ver_id"></span></p>
-<p><strong>Nombre:</strong> <span id="ver_nombre">---</span></p>
+<p><strong>ID cliente:</strong> <span id="idTxt"></span></p>
+<p><strong>Nombre:</strong> <span id="nombreTxt">---</span></p>
 
 <form id="f">
+  <input type="hidden" id="id_cliente">
+  <input type="hidden" id="nombre_cliente">
 
-<input type="hidden" id="id_cliente">
+  <label>Estatus:</label><br>
+  <select id="estatus">
+    <option value="ENTREGADO">ENTREGADO</option>
+    <option value="NO SURTIDO">NO SURTIDO</option>
+  </select><br><br>
 
-<label>Estatus:</label><br>
-<select id="estatus" onchange="controlLitros()">
-  <option value="ENTREGADO">ENTREGADO</option>
-  <option value="NO SE SURTIÓ">NO SE SURTIÓ</option>
-</select><br><br>
+  <label>Litros:</label><br>
+  <input type="number" id="litros" value="0"><br><br>
 
-<label>Litros:</label><br>
-<input type="number" id="litros" value="0"><br><br>
+  <label>Operador:</label><br>
+  <input type="text" id="operador" required><br><br>
 
-<label>Pipa / Operador:</label><br>
-<input type="text" id="operador" required><br><br>
-
-<button type="submit">GUARDAR</button>
-
+  <button type="submit">GUARDAR</button>
 </form>
 
 <script>
-// =====================
-// OBTENER ID DEL QR
-// =====================
-const params = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(location.search);
 const id = params.get("id");
 
-document.getElementById("id_cliente").value = id;
-document.getElementById("ver_id").innerText = id ?? "NO LLEGÓ ID";
+idTxt.textContent = id;
+id_cliente.value = id;
 
-// =====================
-// CONTROL DE LITROS
-// =====================
-function controlLitros() {
-  const litros = document.getElementById("litros");
-  if (document.getElementById("estatus").value === "NO SE SURTIÓ") {
-    litros.value = 0;
-    litros.disabled = true;
-  } else {
-    litros.disabled = false;
-  }
-}
+// CONSULTAR NOMBRE
+fetch("https://script.google.com/macros/s/AKfycbzqd-7-gwJX_yu1n1HvTo8lpABsclmDu8hHelI0aFx0rlP01Yhs3k7e8pUGuFbWasXnEg/exec
+  .then(r => r.json())
+  .then(d => {
+    nombreTxt.textContent = d.nombre || "---";
+    nombre_cliente.value = d.nombre || "";
+  });
 
-// =====================
-// ENVÍO CON GPS
-// =====================
 document.getElementById("f").onsubmit = e => {
   e.preventDefault();
 
-  if (!navigator.geolocation) {
-    alert("El dispositivo no soporta GPS");
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      enviarRegistro(pos.coords.latitude, pos.coords.longitude);
-    },
-    () => {
-      alert("Debes permitir la ubicación para registrar");
-    }
-  );
-};
-
-function enviarRegistro(lat, lon) {
-  fetch("https://script.google.com/macros/s/AKfycbwckH5HWPbEzMVcYrqikO7fmVGlj1u66i4s-FRodj5AXXIhQ9d35JSmXxGAzf-RzdELrw/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzqd-7-gwJX_yu1n1HvTo8lpABsclmDu8hHelI0aFx0rlP01Yhs3k7e8pUGuFbWasXnEg/exec", {
     method: "POST",
     body: JSON.stringify({
-      id: document.getElementById("id_cliente").value,
-      estatus: document.getElementById("estatus").value,
-      litros: document.getElementById("litros").value,
-      operador: document.getElementById("operador").value,
-      lat: lat,
-      lon: lon
+      id: id,
+      nombre: nombre_cliente.value,
+      estatus: estatus.value,
+      litros: litros.value,
+      operador: operador.value
     })
   })
   .then(r => r.text())
-  .then(resp => {
-    if (resp === "DUPLICADO") {
-      alert("⚠️ Este cliente ya fue surtido hoy");
-    } else {
-      alert("✅ Registro guardado correctamente");
-    }
-  });
-}
+  .then(() => alert("✅ Registro guardado"));
+};
 </script>
 
 </body>
-
 </html>
