@@ -45,7 +45,7 @@ const id = params.get("id");
 
 document.getElementById("idCliente").innerText = id;
 
-fetch("https://script.google.com/macros/s/AKfycbw1P0sEyaFqO5BuqUQESTw7sh63uxN31lqBh2q4C3hFPjCK1ldVuH9cs_gs8qPNjVqIkQ/exec?accion=cliente&id=" + id)
+fetch("https://script.google.com/macros/s/AKfycbw5RqeNvLTNYIQdsrViMRhYdBvF3PBLC4klskwn_CcO6pfa0zL_k6hddHXFR5W-Oj0oSw/exec?accion=cliente&id=" + id)
 .then(r => r.json())
 .then(d => {
   if (d.nombre) {
@@ -65,7 +65,7 @@ function guardar() {
     pipa: document.getElementById("pipa").value
   };
 
-  fetch("https://script.google.com/macros/s/AKfycbw1P0sEyaFqO5BuqUQESTw7sh63uxN31lqBh2q4C3hFPjCK1ldVuH9cs_gs8qPNjVqIkQ/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbw5RqeNvLTNYIQdsrViMRhYdBvF3PBLC4klskwn_CcO6pfa0zL_k6hddHXFR5W-Oj0oSw/exec", {
     method: "POST",
     body: JSON.stringify(datos)
   })
@@ -75,3 +75,4 @@ function guardar() {
 
 </body>
 </html>
+
