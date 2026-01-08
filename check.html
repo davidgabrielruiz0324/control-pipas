@@ -40,7 +40,7 @@ idTxt.textContent = id;
 id_cliente.value = id;
 
 // CONSULTAR NOMBRE
-fetch("https://script.google.com/macros/s/AKfycbyLvWvDOZxLBh9O-GCQzyaZlYv_gN0PaDiCZyETpFMlzS768HTQY8etAFyOeQzzCbW8og/exec" + id)
+fetch("https://script.google.com/macros/s/AKfycbzKbYTSHXiSUw--nU6nq6_2emH_KwjDPBSzmc82Qq6fg-wzGUK8vuj_P57CvauBcYRslA/exec" + id)
   .then(r => r.json())
   .then(d => {
     nombreTxt.textContent = d.nombre || "---";
@@ -50,7 +50,7 @@ fetch("https://script.google.com/macros/s/AKfycbyLvWvDOZxLBh9O-GCQzyaZlYv_gN0PaD
 document.getElementById("f").onsubmit = e => {
   e.preventDefault();
 
-  fetch("https://script.google.com/macros/s/AKfycbyLvWvDOZxLBh9O-GCQzyaZlYv_gN0PaDiCZyETpFMlzS768HTQY8etAFyOeQzzCbW8og/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzKbYTSHXiSUw--nU6nq6_2emH_KwjDPBSzmc82Qq6fg-wzGUK8vuj_P57CvauBcYRslA/exec", {
     method: "POST",
     body: JSON.stringify({
       id: id,
@@ -67,3 +67,4 @@ document.getElementById("f").onsubmit = e => {
 
 </body>
 </html>
+
